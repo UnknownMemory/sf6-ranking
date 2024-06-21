@@ -1,0 +1,26 @@
+{
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "**/__pycache__",
+    ],
+    "defineConstant": {
+        "DEBUG": true
+    },
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": false,
+    "pythonVersion": "3.11",
+    "pythonPlatform": "Windows",
+    "executionEnvironments": [
+        {
+            "root": "src/tests",
+            "extraPaths": [
+                "tests/",
+            ]
+        },
+        {
+            "root": "src"
+        }
+    ]
+}
