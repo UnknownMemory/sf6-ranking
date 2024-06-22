@@ -1,0 +1,26 @@
+from typing import Literal
+
+characters = Literal[
+    "luke",
+    "jamie",
+    "manon",
+    "kimberly",
+    "marisa",
+    "lily",
+    "jp",
+    "juri",
+    "deejay",
+    "cammy",
+    "ryu",
+    "honda",
+    "blanka",
+    "guile",
+    "ken",
+    "chun-li",
+    "zangief",
+    "dhalsim",
+    "rashid",
+    "aki",
+    "ed",
+    "gouki",
+]

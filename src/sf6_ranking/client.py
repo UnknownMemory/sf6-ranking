@@ -7,9 +7,12 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
+from sf6_ranking.types.character import characters
+from sf6_ranking import constant
 
-class SF6Ranking:
-    __slots__ = "url, user_agent, build_id, url, client"
+
+class Client:
+    __slots__ = ("url", "user_agent", "build_id", "url", "client")
 
     def __init__(self, email: str, password: str) -> None:
         self.url: str = "https://www.streetfighter.com/6/buckler/_next/data"
@@ -53,10 +56,10 @@ class SF6Ranking:
         token = driver.get_cookie("buckler_id")
         self.client.cookies.set("buckler_id", token, "www.streetfighter.com")
 
-    def master_ranking(
+    async def master_ranking(
         self,
         character_filter="All",
-        character=None,
+        character: Optional[characters] = None,
         platform="All",
         region="All",
         season="current",
