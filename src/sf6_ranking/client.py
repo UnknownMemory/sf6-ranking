@@ -2,13 +2,13 @@ from typing import Optional
 
 import httpx
 from selenium import webdriver
+from pydantic import validate_call
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
-from sf6_ranking.types.character import characters
-from sf6_ranking import constant
+from sf6_ranking.types import Characters, CharacterFilters, Region, Platform
 
 
 class Client:
@@ -30,9 +30,7 @@ class Client:
         driver = webdriver.Chrome(options=options)
 
         driver.get("https://cid.capcom.com/en")
-        driver.add_cookie(
-            {"name": "agecheck", "value": "true", "domain": "cid.capcom.com"}
-        )
+        driver.add_cookie({"name": "agecheck", "value": "true", "domain": "cid.capcom.com"})
 
         driver.get("https://cid.capcom.com/en/login/?guidedBy=web")
         email_input = WebDriverWait(driver, 15).until(
@@ -48,20 +46,19 @@ class Client:
         except NoSuchElementException:
             raise SystemExit("An error occured during the login.")
 
-        driver.get(
-            "https://www.streetfighter.com/6/buckler/auth/loginep?redirect_url=/"
-        )
+        driver.get("https://www.streetfighter.com/6/buckler/auth/loginep?redirect_url=/")
 
         self.build_id = driver.execute_script("return __NEXT_DATA__.buildId")
         token = driver.get_cookie("buckler_id")
         self.client.cookies.set("buckler_id", token, "www.streetfighter.com")
 
+    @validate_call
     async def master_ranking(
         self,
-        character_filter="All",
-        character: Optional[characters] = None,
-        platform="All",
-        region="All",
+        character_filter: CharacterFilters = "all",
+        character: Optional[Characters] = None,
+        platform: Platform = "all",
+        region: Region = "all",
         season="current",
         page=1,
     ):

@@ -18,7 +18,6 @@ license = {text = "MIT"}
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
-
 [tool.pdm]
 distribution = true
 
@@ -32,3 +31,7 @@ type = [
 
 [tool.pdm.scripts]
 lint = "ruff check ."
+
+[tool.ruff]
+line-length = 100
+
