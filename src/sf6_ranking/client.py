@@ -13,17 +13,25 @@ from sf6_ranking.types import Characters, CharacterFilters, Region, Platform, Se
 
 
 class Client:
-    __slots__ = ("url", "user_agent", "build_id", "url", "client")
+    __slots__ = ("url", "user_agent", "_buckler_id", "build_id", "url", "client")
 
-    def __init__(self, email: str, password: str) -> None:
+    def __init__(self) -> None:
         self.url: str = "https://www.streetfighter.com/6/buckler/_next/data"
         self.user_agent: str = (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
         )
-
+        self._buckler_id: Optional[str] = None
         self.build_id: Optional[str] = None
         self.client = httpx.AsyncClient(headers={"user-agent": self.user_agent})
-        self.capcom_login(email, password)
+
+    @property
+    def buckler_id(self):
+        return self._buckler_id
+
+    @buckler_id.setter
+    def buckler_id(self, value: str):
+        self._buckler_id = value
+        self.client.cookies.set("buckler_id", value, "www.streetfighter.com")
 
     def capcom_login(self, email: str, password: str) -> None:
         options = webdriver.ChromeOptions()
@@ -50,8 +58,7 @@ class Client:
         driver.get("https://www.streetfighter.com/6/buckler/auth/loginep?redirect_url=/")
 
         self.build_id = driver.execute_script("return __NEXT_DATA__.buildId")
-        token = driver.get_cookie("buckler_id")
-        self.client.cookies.set("buckler_id", token, "www.streetfighter.com")
+        self.buckler_id = driver.get_cookie("buckler_id")
 
     @validate_call
     async def master_ranking(
@@ -62,7 +69,7 @@ class Client:
         region: Region = "all",
         season: Season = "current",
         page: int = 1,
-    ):
+    ) -> dict:
         reg = constants.RegionEnum[region]
         isAllRegion: int = 1 if reg == 0 else 0
 
