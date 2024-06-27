@@ -8,7 +8,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
-from sf6_ranking.types import Characters, CharacterFilters, Region, Platform
+import sf6_ranking.constants as constants
+from sf6_ranking.types import Characters, CharacterFilters, Region, Platform, Season
 
 
 class Client:
@@ -16,10 +17,12 @@ class Client:
 
     def __init__(self, email: str, password: str) -> None:
         self.url: str = "https://www.streetfighter.com/6/buckler/_next/data"
-        self.user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
+        self.user_agent: str = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
+        )
 
         self.build_id: Optional[str] = None
-        self.client = httpx.Client(headers={"user-agent": self.user_agent})
+        self.client = httpx.AsyncClient(headers={"user-agent": self.user_agent})
         self.capcom_login(email, password)
 
     def capcom_login(self, email: str, password: str) -> None:
@@ -33,9 +36,7 @@ class Client:
         driver.add_cookie({"name": "agecheck", "value": "true", "domain": "cid.capcom.com"})
 
         driver.get("https://cid.capcom.com/en/login/?guidedBy=web")
-        email_input = WebDriverWait(driver, 15).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='email']"))
-        )
+        email_input = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='email']")))
         email_input.send_keys(email)
         password_input = driver.find_element(By.CSS_SELECTOR, "input[name='password']")
         password_input.send_keys(password)
@@ -56,10 +57,26 @@ class Client:
     async def master_ranking(
         self,
         character_filter: CharacterFilters = "all",
-        character: Optional[Characters] = None,
+        character: Optional[Characters] = "luke",
         platform: Platform = "all",
         region: Region = "all",
-        season="current",
-        page=1,
+        season: Season = "current",
+        page: int = 1,
     ):
-        pass
+        reg = constants.RegionEnum[region]
+        isAllRegion: int = 1 if reg == 0 else 0
+
+        params = {
+            "character_filter": constants.CharacterFiltersEnum[character_filter].value,
+            "character_id": character,
+            "platform": constants.PlatformEnum[platform].value,
+            "home_filter": isAllRegion,
+            "home_category_id": reg,
+            "home_id": 1,
+            "page": page,
+            "season_type": constants.SeasonEnum[season].value,
+        }
+
+        res = await self.client.get(f"{self.url}/{self.build_id}/en/ranking/master.json", params=params)
+
+        return res.json()["pageProps"]["master_rating_ranking"]

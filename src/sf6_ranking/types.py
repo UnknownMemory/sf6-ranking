@@ -25,6 +25,7 @@ Characters = Literal[
     "aki",
     "ed",
     "gouki",
+    "vega",
 ]
 
 
@@ -40,3 +41,5 @@ Region = Literal[
 ]
 
 Platform = Literal["all", "same_platform"]
+
+Season = Literal["current", "previous"]
