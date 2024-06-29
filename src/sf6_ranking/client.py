@@ -70,20 +70,36 @@ class Client:
         season: Season = "current",
         page: int = 1,
     ) -> dict:
-        reg = constants.RegionEnum[region]
-        isAllRegion: int = 1 if reg == 0 else 0
+        region_enum = constants.RegionEnum[region]
+        isAllRegion: int = 1 if region_enum == 0 else 0
 
         params = {
             "character_filter": constants.CharacterFiltersEnum[character_filter].value,
             "character_id": character,
             "platform": constants.PlatformEnum[platform].value,
             "home_filter": isAllRegion,
-            "home_category_id": reg,
+            "home_category_id": region_enum,
             "home_id": 1,
             "page": page,
             "season_type": constants.SeasonEnum[season].value,
         }
 
         res = await self.client.get(f"{self.url}/{self.build_id}/en/ranking/master.json", params=params)
+        rankings: dict = res.json()["pageProps"]["master_rating_ranking"]
 
-        return res.json()["pageProps"]["master_rating_ranking"]
+        self.__clean_master_ranking(rankings["my_ranking_info"])
+        for ranking in rankings["ranking_fighter_list"]:
+            self.__clean_master_ranking(ranking)
+
+        return rankings
+
+    def __clean_master_ranking(self, ranking: dict) -> dict:
+        # remove data not directly related to the ranking
+        info_keep = ["personal_info", "home_name", "home_id"]
+
+        ranking.pop("ranking_title_data", None)
+        for info in list(ranking["fighter_banner_info"]):
+            if info not in info_keep:
+                ranking["fighter_banner_info"].pop(info, None)
+
+        return ranking
