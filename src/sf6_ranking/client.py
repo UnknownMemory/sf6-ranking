@@ -78,17 +78,25 @@ class Client:
             raise ValueError("Argument 'character' must be provided when 'character_filter' is set to 'specific_char'.")
 
         region_value = constants.Region[region.upper()].value
-        isAllRegion: int = 1 if region_value == 0 else 0
+        if region_value == 0:
+            is_all_region = 1
+        elif region_value == 7:
+            is_all_region = 3
+        else:
+            is_all_region = 2
+
         params = {
             "character_filter": constants.CharacterFilters[character_filter.upper()].value,
-            "character_id": character,
+            "character_id": "luke" if character is None else character,
             "platform": constants.Platform[platform.upper()].value,
-            "home_filter": isAllRegion,
+            "home_filter": is_all_region,
             "home_category_id": region_value,
-            "home_id": constants.Country[country.upper()].value,
+            "home_id": 1 if country is None else constants.Country[country.upper()].value,
             "page": page,
             "season_type": constants.Season[season.upper()].value,
         }
+
+        print(params)
 
         res = await self.client.get(f"{self.url}/{self.build_id}/en/ranking/master.json", params=params)
         rankings: dict = res.json()["pageProps"]["master_rating_ranking"]
