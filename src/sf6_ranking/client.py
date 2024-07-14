@@ -63,26 +63,31 @@ class Client:
     @validate_call
     async def master_ranking(
         self,
-        character: Optional[Characters],
-        country: Optional[Country],
         character_filter: CharacterFilters = "all",
+        character: Optional[Characters] = None,
         platform: Platform = "all",
         region: Region = "all",
+        country: Optional[Country] = None,
         season: Season = "current",
         page: int = 1,
     ) -> dict:
-        region_enum = constants.Region[region]
-        isAllRegion: int = 1 if region_enum == 0 else 0
+        if region == "specific_region" and country is None:
+            raise ValueError("Argument 'country' must be provided when 'region' is set to 'specific_region'.")
 
+        if character_filter == "specific_char" and character is None:
+            raise ValueError("Argument 'character' must be provided when 'character_filter' is set to 'specific_char'.")
+
+        region_value = constants.Region[region.upper()].value
+        isAllRegion: int = 1 if region_value == 0 else 0
         params = {
-            "character_filter": constants.CharacterFilters[character_filter].value,
+            "character_filter": constants.CharacterFilters[character_filter.upper()].value,
             "character_id": character,
-            "platform": constants.Platform[platform].value,
+            "platform": constants.Platform[platform.upper()].value,
             "home_filter": isAllRegion,
-            "home_category_id": region_enum,
-            "home_id": constants.Country[country].value,
+            "home_category_id": region_value,
+            "home_id": constants.Country[country.upper()].value,
             "page": page,
-            "season_type": constants.Season[season].value,
+            "season_type": constants.Season[season.upper()].value,
         }
 
         res = await self.client.get(f"{self.url}/{self.build_id}/en/ranking/master.json", params=params)
