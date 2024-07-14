@@ -9,7 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
 import sf6_ranking.constants as constants
-from sf6_ranking.types import Characters, CharacterFilters, Region, Platform, Season
+from sf6_ranking.types import Characters, CharacterFilters, Country, Region, Platform, Season
 
 
 class Client:
@@ -63,25 +63,26 @@ class Client:
     @validate_call
     async def master_ranking(
         self,
+        character: Optional[Characters],
+        country: Optional[Country],
         character_filter: CharacterFilters = "all",
-        character: Optional[Characters] = "luke",
         platform: Platform = "all",
         region: Region = "all",
         season: Season = "current",
         page: int = 1,
     ) -> dict:
-        region_enum = constants.RegionEnum[region]
+        region_enum = constants.Region[region]
         isAllRegion: int = 1 if region_enum == 0 else 0
 
         params = {
-            "character_filter": constants.CharacterFiltersEnum[character_filter].value,
+            "character_filter": constants.CharacterFilters[character_filter].value,
             "character_id": character,
-            "platform": constants.PlatformEnum[platform].value,
+            "platform": constants.Platform[platform].value,
             "home_filter": isAllRegion,
             "home_category_id": region_enum,
-            "home_id": 1,
+            "home_id": constants.Country[country].value,
             "page": page,
-            "season_type": constants.SeasonEnum[season].value,
+            "season_type": constants.Season[season].value,
         }
 
         res = await self.client.get(f"{self.url}/{self.build_id}/en/ranking/master.json", params=params)
