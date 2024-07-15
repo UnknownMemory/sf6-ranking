@@ -9,7 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
 import sf6_ranking.constants as constants
-from sf6_ranking.types import Characters, CharacterFilters, Region, Platform, Season
+from sf6_ranking.types import Characters, CharacterFilters, Country, Region, Platform, Season
 
 
 class Client:
@@ -64,25 +64,39 @@ class Client:
     async def master_ranking(
         self,
         character_filter: CharacterFilters = "all",
-        character: Optional[Characters] = "luke",
+        character: Optional[Characters] = None,
         platform: Platform = "all",
         region: Region = "all",
+        country: Optional[Country] = None,
         season: Season = "current",
         page: int = 1,
     ) -> dict:
-        region_enum = constants.RegionEnum[region]
-        isAllRegion: int = 1 if region_enum == 0 else 0
+        if region == "specific_region" and country is None:
+            raise ValueError("Argument 'country' must be provided when 'region' is set to 'specific_region'.")
+
+        if character_filter == "specific_char" and character is None:
+            raise ValueError("Argument 'character' must be provided when 'character_filter' is set to 'specific_char'.")
+
+        region_value = constants.Region[region.upper()].value
+        if region_value == 0:
+            is_all_region = 1
+        elif region_value == 7:
+            is_all_region = 3
+        else:
+            is_all_region = 2
 
         params = {
-            "character_filter": constants.CharacterFiltersEnum[character_filter].value,
-            "character_id": character,
-            "platform": constants.PlatformEnum[platform].value,
-            "home_filter": isAllRegion,
-            "home_category_id": region_enum,
-            "home_id": 1,
+            "character_filter": constants.CharacterFilters[character_filter.upper()].value,
+            "character_id": "luke" if character is None else character,
+            "platform": constants.Platform[platform.upper()].value,
+            "home_filter": is_all_region,
+            "home_category_id": region_value,
+            "home_id": 1 if country is None else constants.Country[country.upper()].value,
             "page": page,
-            "season_type": constants.SeasonEnum[season].value,
+            "season_type": constants.Season[season.upper()].value,
         }
+
+        print(params)
 
         res = await self.client.get(f"{self.url}/{self.build_id}/en/ranking/master.json", params=params)
         rankings: dict = res.json()["pageProps"]["master_rating_ranking"]
