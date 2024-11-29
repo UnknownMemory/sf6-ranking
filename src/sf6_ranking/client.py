@@ -1,9 +1,11 @@
+import subprocess
 from typing import Optional
 
 import httpx
 from selenium import webdriver
 from pydantic import validate_call
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
@@ -38,6 +40,11 @@ class Client:
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         options.add_argument("--headless=new")
         options.add_argument(f"user-agent={self.user_agent}")
+
+        service = Service()
+        service.creation_flags = subprocess.CREATE_NO_WINDOW
+        driver = webdriver.Chrome(options=options, service=service)
+
         driver = webdriver.Chrome(options=options)
 
         driver.get("https://cid.capcom.com/en")
@@ -58,7 +65,7 @@ class Client:
         driver.get("https://www.streetfighter.com/6/buckler/auth/loginep?redirect_url=/")
 
         self.build_id = driver.execute_script("return __NEXT_DATA__.buildId")
-        self.buckler_id = driver.get_cookie("buckler_id")
+        self.buckler_id = driver.get_cookie("buckler_id")["value"]
 
     @validate_call
     async def master_ranking(
