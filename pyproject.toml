@@ -28,6 +28,11 @@ lint = [
 type = [
     "pyright>=1.1.350",
 ]
+dev = [
+    "pytest>=8.3.3",
+    "pytest-mock>=3.14.0",
+    "pytest-asyncio>=0.24.0",
+]
 
 [tool.pdm.scripts]
 lint = "ruff check ."
