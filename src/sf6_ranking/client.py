@@ -103,8 +103,6 @@ class Client:
             "season_type": constants.Season[season.upper()].value,
         }
 
-        print(params)
-
         res = await self.client.get(f"{self.url}/{self.build_id}/en/ranking/master.json", params=params)
         rankings: dict = res.json()["pageProps"]["master_rating_ranking"]
 
@@ -116,11 +114,11 @@ class Client:
 
     def __clean_master_ranking(self, ranking: dict) -> dict:
         # remove data not directly related to the ranking
-        info_keep = ["personal_info", "home_name", "home_id"]
 
         ranking.pop("ranking_title_data", None)
-        for info in list(ranking["fighter_banner_info"]):
-            if info not in info_keep:
-                ranking["fighter_banner_info"].pop(info, None)
-
+        ranking["fighter_banner_info"] = {
+            "personal_info": ranking["fighter_banner_info"].get("personal_info"),
+            "home_name": ranking["fighter_banner_info"].get("home_name"),
+            "home_id": ranking["fighter_banner_info"].get("home_id"),
+        }
         return ranking
