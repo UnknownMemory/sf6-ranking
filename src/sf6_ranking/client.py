@@ -2,26 +2,38 @@ import subprocess
 from typing import Optional
 
 import httpx
-from selenium import webdriver
 from pydantic import validate_call
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.wait import WebDriverWait
+from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 import sf6_ranking.constants as constants
-from sf6_ranking.types import Characters, CharacterFilters, Country, Region, Platform, Season
+from sf6_ranking.types import (
+    CharacterFilters,
+    Characters,
+    Country,
+    Platform,
+    Region,
+    Season,
+)
 
 
 class Client:
-    __slots__ = ("url", "user_agent", "_buckler_id", "build_id", "url", "client")
+    __slots__ = (
+        "url",
+        "user_agent",
+        "_buckler_id",
+        "build_id",
+        "url",
+        "client",
+    )
 
     def __init__(self) -> None:
         self.url: str = "https://www.streetfighter.com/6/buckler/_next/data"
-        self.user_agent: str = (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
-        )
+        self.user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
         self._buckler_id: Optional[str] = None
         self.build_id: Optional[str] = None
         self.client = httpx.AsyncClient(headers={"user-agent": self.user_agent})
@@ -48,21 +60,31 @@ class Client:
         driver = webdriver.Chrome(options=options)
 
         driver.get("https://cid.capcom.com/en")
-        driver.add_cookie({"name": "agecheck", "value": "true", "domain": "cid.capcom.com"})
+        driver.add_cookie(
+            {"name": "agecheck", "value": "true", "domain": "cid.capcom.com"}
+        )
 
         driver.get("https://cid.capcom.com/en/login/?guidedBy=web")
-        email_input = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='email']")))
+        email_input = WebDriverWait(driver, 15).until(
+            expected_conditions.element_to_be_clickable(
+                (By.CSS_SELECTOR, "input[name='email']")
+            )
+        )
         email_input.send_keys(email)
         password_input = driver.find_element(By.CSS_SELECTOR, "input[name='password']")
         password_input.send_keys(password)
         password_input.submit()
 
         try:
-            WebDriverWait(driver, 15).until(EC.title_contains("Account Page"))
+            WebDriverWait(driver, 15).until(
+                expected_conditions.title_contains("Account Page")
+            )
         except NoSuchElementException:
             raise SystemExit("An error occured during the login.")
 
-        driver.get("https://www.streetfighter.com/6/buckler/auth/loginep?redirect_url=/")
+        driver.get(
+            "https://www.streetfighter.com/6/buckler/auth/loginep?redirect_url=/"
+        )
 
         self.build_id = driver.execute_script("return __NEXT_DATA__.buildId")
         self.buckler_id = driver.get_cookie("buckler_id")["value"]
@@ -79,10 +101,14 @@ class Client:
         page: int = 1,
     ) -> dict:
         if region == "specific_region" and country is None:
-            raise ValueError("Argument 'country' must be provided when 'region' is set to 'specific_region'.")
+            raise ValueError(
+                "Argument 'country' must be provided when 'region' is set to 'specific_region'."
+            )
 
         if character_filter == "specific_char" and character is None:
-            raise ValueError("Argument 'character' must be provided when 'character_filter' is set to 'specific_char'.")
+            raise ValueError(
+                "Argument 'character' must be provided when 'character_filter' is set to 'specific_char'."
+            )
 
         region_value = constants.Region[region.upper()].value
         if region_value == 0:
@@ -93,17 +119,23 @@ class Client:
             is_all_region = 2
 
         params = {
-            "character_filter": constants.CharacterFilters[character_filter.upper()].value,
+            "character_filter": constants.CharacterFilters[
+                character_filter.upper()
+            ].value,
             "character_id": "luke" if character is None else character,
             "platform": constants.Platform[platform.upper()].value,
             "home_filter": is_all_region,
             "home_category_id": region_value,
-            "home_id": 1 if country is None else constants.Country[country.upper()].value,
+            "home_id": 1
+            if country is None
+            else constants.Country[country.upper()].value,
             "page": page,
             "season_type": constants.Season[season.upper()].value,
         }
 
-        res = await self.client.get(f"{self.url}/{self.build_id}/en/ranking/master.json", params=params)
+        res = await self.client.get(
+            f"{self.url}/{self.build_id}/en/ranking/master.json", params=params
+        )
         rankings: dict = res.json()["pageProps"]["master_rating_ranking"]
 
         self.__clean_master_ranking(rankings["my_ranking_info"])

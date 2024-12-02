@@ -28,7 +28,6 @@ Characters = Literal[
     "vega",
 ]
 
-
 Region = Literal[
     "all",
     "africa",

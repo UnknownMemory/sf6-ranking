@@ -1,4 +1,5 @@
 import pytest
+
 from sf6_ranking.client import Client
 
 
@@ -28,7 +29,11 @@ def master_ranking_data(scope="module"):
                             "master_rating": 1328,
                             "master_rating_ranking": 190999,
                         },
-                        "favorite_character_play_point": {"battle_hub": 36935, "fighting_ground": 132113, "world_tour": 5508},
+                        "favorite_character_play_point": {
+                            "battle_hub": 36935,
+                            "fighting_ground": 132113,
+                            "world_tour": 5508,
+                        },
                         "friend_request_flag": False,
                         "friendship": 1,
                         "home_id": 61,
@@ -61,9 +66,16 @@ def master_ranking_data(scope="module"):
                                 "emblem_symbol2_horizontal_inversion": False,
                                 "emblem_symbol2_vertical_inversion": False,
                             },
-                            "leader": {"fighter_id": "User Test", "platform_id": 5, "short_id": 32332977363},
+                            "leader": {
+                                "fighter_id": "User Test",
+                                "platform_id": 5,
+                                "short_id": 32332977363,
+                            },
                         },
-                        "max_content_play_time": {"content_type": 2, "play_time": 431449},
+                        "max_content_play_time": {
+                            "content_type": 2,
+                            "play_time": 431449,
+                        },
                         "mobile_linkage": False,
                         "online_status_info": {
                             "battlehub_admission_restriction": 0,
@@ -87,7 +99,12 @@ def master_ranking_data(scope="module"):
                             "platform_name": "Steam",
                             "platform_tool_name": "steam",
                         },
-                        "play_time_zone": {"end_hour": 22, "end_minute": 0, "start_hour": 21, "start_minute": 30},
+                        "play_time_zone": {
+                            "end_hour": 22,
+                            "end_minute": 0,
+                            "start_hour": 21,
+                            "start_minute": 30,
+                        },
                         "profile_comment": {"profile_tag_id": 1, "tag_option_id": 0},
                         "title_plate": 10917,
                         "favorite_character_name": "Marisa",
@@ -136,7 +153,11 @@ def master_ranking_data(scope="module"):
                                 "master_rating": 2234,
                                 "master_rating_ranking": 1,
                             },
-                            "favorite_character_play_point": {"battle_hub": 2173, "fighting_ground": 626543, "world_tour": 1360},
+                            "favorite_character_play_point": {
+                                "battle_hub": 2173,
+                                "fighting_ground": 626543,
+                                "world_tour": 1360,
+                            },
                             "friend_request_flag": False,
                             "friendship": 2,
                             "home_id": 85,
@@ -169,9 +190,16 @@ def master_ranking_data(scope="module"):
                                     "emblem_symbol2_horizontal_inversion": False,
                                     "emblem_symbol2_vertical_inversion": False,
                                 },
-                                "leader": {"fighter_id": "ラボモンスター高木", "platform_id": 5, "short_id": 3249813921},
+                                "leader": {
+                                    "fighter_id": "ラボモンスター高木",
+                                    "platform_id": 5,
+                                    "short_id": 3249813921,
+                                },
                             },
-                            "max_content_play_time": {"content_type": 2, "play_time": 4052836},
+                            "max_content_play_time": {
+                                "content_type": 2,
+                                "play_time": 4052836,
+                            },
                             "mobile_linkage": False,
                             "online_status_info": {
                                 "battlehub_admission_restriction": 0,
@@ -195,8 +223,16 @@ def master_ranking_data(scope="module"):
                                 "platform_name": "Steam",
                                 "platform_tool_name": "steam",
                             },
-                            "play_time_zone": {"end_hour": 13, "end_minute": 30, "start_hour": 12, "start_minute": 30},
-                            "profile_comment": {"profile_tag_id": 7, "tag_option_id": 0},
+                            "play_time_zone": {
+                                "end_hour": 13,
+                                "end_minute": 30,
+                                "start_hour": 12,
+                                "start_minute": 30,
+                            },
+                            "profile_comment": {
+                                "profile_tag_id": 7,
+                                "tag_option_id": 0,
+                            },
                             "title_plate": 10824,
                             "favorite_character_name": "Rashid",
                             "favorite_character_tool_name": "rashid",
@@ -243,7 +279,11 @@ def master_ranking_data(scope="module"):
                                 "master_rating": 2231,
                                 "master_rating_ranking": 2,
                             },
-                            "favorite_character_play_point": {"battle_hub": 580, "fighting_ground": 240782, "world_tour": 0},
+                            "favorite_character_play_point": {
+                                "battle_hub": 580,
+                                "fighting_ground": 240782,
+                                "world_tour": 0,
+                            },
                             "friend_request_flag": False,
                             "friendship": 2,
                             "home_id": 85,
@@ -276,9 +316,16 @@ def master_ranking_data(scope="module"):
                                     "emblem_symbol2_horizontal_inversion": False,
                                     "emblem_symbol2_vertical_inversion": False,
                                 },
-                                "leader": {"fighter_id": "Mizuha", "platform_id": 5, "short_id": 1617165084},
+                                "leader": {
+                                    "fighter_id": "Mizuha",
+                                    "platform_id": 5,
+                                    "short_id": 1617165084,
+                                },
                             },
-                            "max_content_play_time": {"content_type": 8, "play_time": 2210098},
+                            "max_content_play_time": {
+                                "content_type": 8,
+                                "play_time": 2210098,
+                            },
                             "mobile_linkage": False,
                             "online_status_info": {
                                 "battlehub_admission_restriction": 0,
@@ -302,8 +349,16 @@ def master_ranking_data(scope="module"):
                                 "platform_name": "Steam",
                                 "platform_tool_name": "steam",
                             },
-                            "play_time_zone": {"end_hour": 11, "end_minute": 0, "start_hour": 9, "start_minute": 30},
-                            "profile_comment": {"profile_tag_id": 1, "tag_option_id": 0},
+                            "play_time_zone": {
+                                "end_hour": 11,
+                                "end_minute": 0,
+                                "start_hour": 9,
+                                "start_minute": 30,
+                            },
+                            "profile_comment": {
+                                "profile_tag_id": 1,
+                                "tag_option_id": 0,
+                            },
                             "title_plate": 10570,
                             "favorite_character_name": "Cammy",
                             "favorite_character_tool_name": "cammy",
